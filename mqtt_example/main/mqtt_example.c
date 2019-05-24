@@ -29,10 +29,10 @@ extern int len;
 extern uint32_t pwm0_duty;
 
 // #define PRODUCT_KEY             NULL
-#define PRODUCT_KEY             "a1GPRWGzLFK"
-#define PRODUCT_SECRET          "rxRs4O69GYz91Pga"
-#define DEVICE_NAME             "YOUERYUAN_1"
-#define DEVICE_SECRET           "pkEsfl6jc7F8dYZYcQWVcGlFr31PwBQH"
+#define PRODUCT_KEY             "a1XfaKtwHC0"
+#define PRODUCT_SECRET          "kjxO2hoA1q4ZXAmx"
+#define DEVICE_NAME             "test_1"
+#define DEVICE_SECRET           "XCLvJjiCvVrzMv3FEKT72MM0P0d54Eos"
       
 /* These are pre-defined topics */
 #define TOPIC_UPDATE            "/"PRODUCT_KEY"/"DEVICE_NAME"/update"
@@ -133,20 +133,20 @@ void event_handle(void *pcontext, void *pclient, iotx_mqtt_event_msg_pt msg)
 static void _user_parse_cloud_cmd(const char *request, const int request_len)
 {
 	char* ptr = NULL;
-	uint32_t pwm_duty_get[1];
+	//uint32_t pwm_duty_get[1];
 
-	if (strstr(request, "params") != NULL)
-	{
-        ptr = strstr(request, "Speed_Motor");
-        ptr += 13;
-        pwm0_duty = atoi(ptr);
-	//    pwm0_duty=500;
-        pwm_set_duty(0,pwm0_duty);
-        pwm_start();
-
-		pwm_get_duty(0,pwm_duty_get);
-	//	printf("--%d--",pwm_duty_get[0]);
-	}
+//	if (strstr(request, "params") != NULL)
+//	{
+//        ptr = strstr(request, "Speed_Motor");
+//        ptr += 13;
+//        pwm0_duty = atoi(ptr);
+//	//    pwm0_duty=500;
+//        pwm_set_duty(0,pwm0_duty);
+//        pwm_start();
+//
+//		pwm_get_duty(0,pwm_duty_get);
+//	//	printf("--%d--",pwm_duty_get[0]);
+//	}
 
 }
 
@@ -156,9 +156,21 @@ static void _demo_message_arrive(void *pcontext, void *pclient, iotx_mqtt_event_
 
     switch (msg->event_type) {
         case IOTX_MQTT_EVENT_PUBLISH_RECEIVED:
+//        	uart_write_bytes(UART_NUM_0, (const char *) (ptopic_info->payload), ptopic_info->payload_len);
+            /* print topic name and topic message */
+            EXAMPLE_TRACE("----");
+            EXAMPLE_TRACE("PacketId: %d", ptopic_info->packet_id);
+            EXAMPLE_TRACE("Topic: '%.*s' (Length: %d)",
+                          ptopic_info->topic_len,
+                          ptopic_info->ptopic,
+                          ptopic_info->topic_len);
+            EXAMPLE_TRACE("Payload: '%.*s' (Length: %d)",
+                          ptopic_info->payload_len,
+                          ptopic_info->payload,
+                          ptopic_info->payload_len);
+            EXAMPLE_TRACE("----");
 
-        	uart_write_bytes(UART_NUM_0, (const char *) (ptopic_info->payload), ptopic_info->payload_len);
-//            _user_parse_cloud_cmd(ptopic_info->payload,ptopic_info->payload_len);
+            _user_parse_cloud_cmd(ptopic_info->payload,ptopic_info->payload_len);
             break;
         default:
             EXAMPLE_TRACE("Should NOT arrive here.");
@@ -174,11 +186,6 @@ int mqtt_client(void)
     iotx_mqtt_param_t mqtt_params;
     iotx_mqtt_topic_info_t topic_msg;
     char msg_pub[128];
-
-    int hum,temp;
-    int tem[2];
-    int Valt;
-    float Valtf=0;
 
     /* Device AUTH */
     if (0 != IOT_SetupConnInfo(PRODUCT_KEY, DEVICE_NAME, DEVICE_SECRET, (void **)&pconn_info)) {
@@ -233,28 +240,19 @@ int mqtt_client(void)
     topic_msg.dup = 0;
 
     do {
-    	LED_toggle();
+    	//LED_toggle();
         /* Generate topic message */
 
-//    	EXAMPLE_TRACE("UART_RX_flag: %d", UART_RX_flag);
-//    	EXAMPLE_TRACE("UART_RX_len : %d", len);
-
-    	if(UART_RX_flag==1)
-    	{
-    		UART_RX_flag=0;
-
-			topic_msg.payload = (void *)data;
-			topic_msg.payload_len = len;
-
-			//EXAMPLE_TRACE("in uart cmd!");
-			//uart_write_bytes(UART_NUM_0, (const char *) data, len);
-
-			rc = IOT_MQTT_Publish(pclient, TOPIC_UP_PROPERTY, &topic_msg);
-			if (rc < 0) {
-				EXAMPLE_TRACE("error occur when publish");
-			}
-			memset(data, 0, sizeof data);
-    	}
+//		topic_msg.payload = (void *)data;
+//		topic_msg.payload_len = len;
+//
+//		//EXAMPLE_TRACE("in uart cmd!");
+//		//uart_write_bytes(UART_NUM_0, (const char *) data, len);
+//
+//		rc = IOT_MQTT_Publish(pclient, TOPIC_UP_PROPERTY, &topic_msg);
+//		if (rc < 0) {
+//			EXAMPLE_TRACE("error occur when publish");
+//		}
 
         /* handle the MQTT packet received from TCP or SSL connection */
         IOT_MQTT_Yield(pclient, 1000);
@@ -278,6 +276,14 @@ int mqtt_client(void)
     return 0;
 }
 
+void set_iotx_info(void)
+{
+    HAL_SetProductKey(PRODUCT_KEY);
+    HAL_SetProductSecret(PRODUCT_SECRET);
+    HAL_SetDeviceName(DEVICE_NAME);
+    HAL_SetDeviceSecret(DEVICE_SECRET);
+}
+
 int linkkit_main(void *paras)
 {
     IOT_SetLogLevel(IOT_LOG_NONE);
@@ -291,10 +297,7 @@ int linkkit_main(void *paras)
         user_argv = p->argv;
     }
 
-    HAL_SetProductKey(PRODUCT_KEY);
-    HAL_SetDeviceName(DEVICE_NAME);
-    HAL_SetDeviceSecret(DEVICE_SECRET);
-    HAL_SetProductSecret(PRODUCT_SECRET);
+    set_iotx_info();
     /* Choose Login Server */
     int domain_type = IOTX_CLOUD_REGION_SHANGHAI;
     IOT_Ioctl(IOTX_IOCTL_SET_DOMAIN, (void *)&domain_type);

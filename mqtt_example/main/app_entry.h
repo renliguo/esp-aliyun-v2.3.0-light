@@ -16,7 +16,6 @@ typedef struct {
     char **argv;
 }app_main_paras_t;
 
-
-
+void set_iotx_info(void);
 int linkkit_main(void *paras);
 #endif

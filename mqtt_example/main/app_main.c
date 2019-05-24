@@ -44,9 +44,12 @@
 #include "platform_hal.h"
 
 #include "driver_control.h"
+#include "restore.h"
 
 #include "driver/pwm.h"
 #include "driver/uart.h"
+
+#include "awss.h"
 
 int WIFIconfig_cnt=0;
 
@@ -66,15 +69,6 @@ int16_t phase[4] = {
     0, 0, 50,
 };
 
-/* The examples use simple WiFi configuration that you can set via
-   'make menuconfig'.
-
-   If you'd rather not, just change the below entries to strings with
-   the config you want - ie #define EXAMPLE_WIFI_SSID "mywifissid"
-*/
-#define EXAMPLE_WIFI_SSID CONFIG_WIFI_SSID
-#define EXAMPLE_WIFI_PASS CONFIG_WIFI_PASSWORD
-
 #define WIFI_CONF_SPACE_NAME     "WIFI_CONF_APP"
 #define NVS_KEY_WIFI_CONFIG "wifi_config"
 
@@ -90,9 +84,9 @@ const int WIFIconf_out_BIT = BIT2;
 
 static const char* TAG = "app main";
 
-wifi_config_t  wifi_config;
+#define CONNECT_AP_TIMEOUT 60000
 
-TaskHandle_t WIFIcofig_timer_task_Handler;
+wifi_config_t  wifi_config;
 
 void smartconfig_example_task(void * parm);
 
@@ -100,19 +94,22 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 {
     switch (event->event_id) {
         case SYSTEM_EVENT_STA_START:
+        	ESP_LOGI(TAG, "SYSTEM_EVENT_STA_START");
             //esp_wifi_connect();
-        	xTaskCreate(smartconfig_example_task, "smartconfig_example_task", 5120, NULL, 3, NULL);
+        	//xTaskCreate(smartconfig_example_task, "smartconfig_example_task", 5120, NULL, 3, NULL);
             break;
 
         case SYSTEM_EVENT_STA_GOT_IP:
+        	ESP_LOGI(TAG, "SYSTEM_EVENT_STA_GOT_IP");
             xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
             break;
 
         case SYSTEM_EVENT_STA_DISCONNECTED:
+        	ESP_LOGW(TAG, "SYSTEM_EVENT_STA_DISCONNECTED");
             /* This is a workaround as ESP8266 WiFi libs don't currently
                auto-reassociate. */
-            esp_wifi_connect();
-            xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
+//            esp_wifi_connect();
+//            xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
             break;
 
         default:
@@ -122,107 +119,126 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
     return ESP_OK;
 }
 
-static void initialise_wifi(void)
+static void linkkit_event_monitor(int event)
 {
-    tcpip_adapter_init();
-    wifi_event_group = xEventGroupCreate();
-    ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL));
-
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-//    ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
-//    wifi_config_t wifi_config = {
-//        .sta = {
-//            .ssid = EXAMPLE_WIFI_SSID,
-//            .password = EXAMPLE_WIFI_PASS,
-//        },
-//    };
-//    ESP_LOGI(TAG, "Setting WiFi configuration SSID %s...", wifi_config.sta.ssid);
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
-//    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
-    ESP_ERROR_CHECK(esp_wifi_start());
-}
-
-static void sc_callback(smartconfig_status_t status, void *pdata)
-{
-    switch (status) {
-        case SC_STATUS_WAIT:
-            ESP_LOGI(TAG, "SC_STATUS_WAIT");
+    switch (event) {
+        case IOTX_AWSS_START: // AWSS start without enbale, just supports device discover
+            // operate led to indicate user
+            ESP_LOGI(TAG, "IOTX_AWSS_START");
             break;
-        case SC_STATUS_FIND_CHANNEL:
-            ESP_LOGI(TAG, "SC_STATUS_FINDING_CHANNEL");
+        case IOTX_AWSS_ENABLE: // AWSS enable, AWSS doesn't parse awss packet until AWSS is enabled.
+            ESP_LOGI(TAG, "IOTX_AWSS_ENABLE");
+            // operate led to indicate user
             break;
-        case SC_STATUS_GETTING_SSID_PSWD:
-            ESP_LOGI(TAG, "SC_STATUS_GETTING_SSID_PSWD");
+        case IOTX_AWSS_LOCK_CHAN: // AWSS lock channel(Got AWSS sync packet)
+            ESP_LOGI(TAG, "IOTX_AWSS_LOCK_CHAN");
+            // operate led to indicate user
             break;
-        case SC_STATUS_LINK:
-            ESP_LOGI(TAG, "SC_STATUS_LINK");
-
-            wifi_config_t *wifi_config_temp = pdata;
-
-            memcpy(&wifi_config,wifi_config_temp,sizeof(wifi_config_t));
-
-            ESP_LOGI(TAG, "SSID:%s", wifi_config.sta.ssid);
-            ESP_LOGI(TAG, "PASSWORD:%s", wifi_config.sta.password);
-            //¥Ê¥¢WIFI’Àªß£¨√‹¬Î°£
-            //esp_info_erase(NVS_KEY_WIFI_CONFIG);
-            esp_info_save(NVS_KEY_WIFI_CONFIG,&wifi_config,sizeof(wifi_config_t));
-            //vTaskDelete(WIFIcofig_timer_task_Handler);
-
-            ESP_ERROR_CHECK( esp_wifi_disconnect() );
-            ESP_ERROR_CHECK( esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
-            ESP_ERROR_CHECK( esp_wifi_connect() );
+        case IOTX_AWSS_PASSWD_ERR: // AWSS decrypt passwd error
+            ESP_LOGE(TAG, "IOTX_AWSS_PASSWD_ERR");
+            // operate led to indicate user
             break;
-        case SC_STATUS_LINK_OVER:
-            ESP_LOGI(TAG, "SC_STATUS_LINK_OVER");
-            if (pdata != NULL) {
-                uint8_t phone_ip[4] = { 0 };
-                memcpy(phone_ip, (uint8_t* )pdata, 4);
-                ESP_LOGI(TAG, "Phone ip: %d.%d.%d.%d\n", phone_ip[0], phone_ip[1], phone_ip[2], phone_ip[3]);
-            }
-            xEventGroupSetBits(wifi_event_group, ESPTOUCH_DONE_BIT);
+        case IOTX_AWSS_GOT_SSID_PASSWD:
+            ESP_LOGI(TAG, "IOTX_AWSS_GOT_SSID_PASSWD");
+            // operate led to indicate user
+            break;
+        case IOTX_AWSS_CONNECT_ADHA: // AWSS try to connnect adha (device
+                                     // discover, router solution)
+            ESP_LOGI(TAG, "IOTX_AWSS_CONNECT_ADHA");
+            // operate led to indicate user
+            break;
+        case IOTX_AWSS_CONNECT_ADHA_FAIL: // AWSS fails to connect adha
+            ESP_LOGE(TAG, "IOTX_AWSS_CONNECT_ADHA_FAIL");
+            // operate led to indicate user
+            break;
+        case IOTX_AWSS_CONNECT_AHA: // AWSS try to connect aha (AP solution)
+            ESP_LOGI(TAG, "IOTX_AWSS_CONNECT_AHA");
+            // operate led to indicate user
+            break;
+        case IOTX_AWSS_CONNECT_AHA_FAIL: // AWSS fails to connect aha
+            ESP_LOGE(TAG, "IOTX_AWSS_CONNECT_AHA_FAIL");
+            // operate led to indicate user
+            break;
+        case IOTX_AWSS_SETUP_NOTIFY: // AWSS sends out device setup information
+                                     // (AP and router solution)
+            ESP_LOGI(TAG, "IOTX_AWSS_SETUP_NOTIFY");
+            // operate led to indicate user
+            break;
+        case IOTX_AWSS_CONNECT_ROUTER: // AWSS try to connect destination router
+            ESP_LOGI(TAG, "IOTX_AWSS_CONNECT_ROUTER");
+            // operate led to indicate user
+            break;
+        case IOTX_AWSS_CONNECT_ROUTER_FAIL: // AWSS fails to connect destination
+                                            // router.
+            ESP_LOGE(TAG, "IOTX_AWSS_CONNECT_ROUTER_FAIL");
+            // operate led to indicate user
+            break;
+        case IOTX_AWSS_GOT_IP: // AWSS connects destination successfully and got
+                               // ip address
+            ESP_LOGI(TAG, "IOTX_AWSS_GOT_IP");
+            // operate led to indicate user
+            break;
+        case IOTX_AWSS_SUC_NOTIFY: // AWSS sends out success notify (AWSS
+                                   // sucess)
+            ESP_LOGI(TAG, "IOTX_AWSS_SUC_NOTIFY");
+            // operate led to indicate user
+            break;
+        case IOTX_AWSS_BIND_NOTIFY: // AWSS sends out bind notify information to
+                                    // support bind between user and device
+            ESP_LOGI(TAG, "IOTX_AWSS_BIND_NOTIFY");
+            awss_stop();
+            // operate led to indicate user
+            break;
+        case IOTX_AWSS_ENABLE_TIMEOUT: // AWSS enable timeout
+                                       // user needs to enable awss again to support get ssid & passwd of router
+            ESP_LOGW(TAG, "IOTX_AWSS_ENALBE_TIMEOUT");
+            // operate led to indicate user
+            break;
+        case IOTX_CONN_CLOUD: // Device try to connect cloud
+            ESP_LOGI(TAG, "IOTX_CONN_CLOUD");
+            // operate led to indicate user
+            break;
+        case IOTX_CONN_CLOUD_FAIL: // Device fails to connect cloud, refer to
+                                   // net_sockets.h for error code
+            ESP_LOGE(TAG, "IOTX_CONN_CLOUD_FAIL");
+            // operate led to indicate user
+            break;
+        case IOTX_CONN_CLOUD_SUC: // Device connects cloud successfully
+            ESP_LOGI(TAG, "IOTX_CONN_CLOUD_SUC");
+            // operate led to indicate user
+            break;
+        case IOTX_RESET: // Linkkit reset success (just got reset response from
+                         // cloud without any other operation)
+            ESP_LOGI(TAG, "IOTX_RESET");
+            // operate led to indicate user
             break;
         default:
             break;
     }
 }
 
-void smartconfig_example_task(void * parm)
+static void initialise_wifi(void)
 {
-    EventBits_t uxBits;
-    ESP_ERROR_CHECK( esp_smartconfig_set_type(SC_TYPE_ESPTOUCH_AIRKISS) );
-    ESP_ERROR_CHECK( esp_smartconfig_start(sc_callback) );
-    while (1) {
-        uxBits = xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT | ESPTOUCH_DONE_BIT|WIFIconf_out_BIT, true, false, portMAX_DELAY);
-        if(uxBits & CONNECTED_BIT) {
-            ESP_LOGI(TAG, "WiFi Connected to ap");
-        }
-        if(uxBits & ESPTOUCH_DONE_BIT) {
-            ESP_LOGI(TAG, "smartconfig over");
+    tcpip_adapter_init();
+    wifi_event_group = xEventGroupCreate();
+    ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL));
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+    ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_start());
 
-            esp_smartconfig_stop();
-            vTaskDelete(WIFIcofig_timer_task_Handler);
-            vTaskDelete(NULL);
-        }
-        if(uxBits & WIFIconf_out_BIT) {
-            ESP_LOGI(TAG, "MY_WiFiconfig stop");
-            esp_smartconfig_stop();
-
-            ESP_ERROR_CHECK( esp_wifi_disconnect() );
-            ESP_ERROR_CHECK( esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
-            ESP_ERROR_CHECK( esp_wifi_connect() );
-
-            vTaskDelete(NULL);
-        }
-    }
+    set_user_wifi_event_cb(event_handler);
 }
+
+
 
 void mqtt_example(void* parameter)
 {
     while(1) {
-        ESP_LOGI(TAG, "wait wifi connect...");
-        xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, false, true, portMAX_DELAY);
+        // wait for WiFi connected
+        HAL_Wait_Net_Ready(0);
+        ESP_LOGI(TAG, "Network is Ready!");
 
         app_main_paras_t paras;
         const char* argv[] = {"main", "loop"};
@@ -238,50 +254,7 @@ void LED_task(void *pvParameter)
     for(; ; )
     {
     	LED_toggle();
-    	vTaskDelay(3000 / portTICK_RATE_MS);
-    }
-    vTaskDelete(NULL);
-}
-
-void WIFIcofig_timer_task(void *pvParameter)
-{
-    for(; ; )
-    {
-    	//if(WIFIconfig_cnt<oxf)
-    	WIFIconfig_cnt++;
-
-    	if(WIFIconfig_cnt>200)
-    	{
-    		WIFIconfig_cnt=0;
-
-    		xEventGroupSetBits(wifi_event_group, WIFIconf_out_BIT);
-
-    		vTaskDelete(WIFIcofig_timer_task_Handler);
-    	}
-    	LED_toggle();
-    	vTaskDelay(100 / portTICK_RATE_MS);
-    }
-    vTaskDelete(NULL);
-}
-
-void UART_task(void *pvParameter)
-{
-    for(; ; )
-    {
-    	//LED_toggle();
-
-    	if(UART_RX_flag==0)
-    	{
-			len = uart_read_bytes(UART_NUM_0, data, BUF_SIZE, 20 / portTICK_RATE_MS);
-			//uart_write_bytes(UART_NUM_0, (const char *) data, len);
-
-	    	if (strstr((const char *)data, "thing.event.property.post") != NULL)
-	    	{
-	    		UART_RX_flag=1;
-	    		//HAL_SleepMs(2000);
-	    	}
-    	}
-    	vTaskDelay(5 / portTICK_RATE_MS);
+    	vTaskDelay(500 / portTICK_RATE_MS);
     }
     vTaskDelete(NULL);
 }
@@ -303,35 +276,34 @@ void app_main()
     ESP_LOGI(TAG, "esp-aliyun verison: %s", HAL_GetEAVerison());
     ESP_LOGI(TAG, "iotkit-embedded version: %s", HAL_GetIEVerison());
 
-    esp_info_load(NVS_KEY_WIFI_CONFIG, &wifi_config, sizeof(wifi_config_t));
-
-    ESP_LOGI(TAG, "SSID:%s", wifi_config.sta.ssid);
-    ESP_LOGI(TAG, "PASSWORD:%s", wifi_config.sta.password);
-
-    xTaskCreate(WIFIcofig_timer_task, "WIFIcofig_timer_task", 4096, NULL, 5, (TaskHandle_t*  )WIFIcofig_timer_task_Handler);
-
-    initialise_wifi();
+    restore_factory_init();
 
     GPIO_init();
 
-    // Configure parameters of an UART driver,
-    // communication pins and install the driver
-    uart_config_t uart_config = {
-        .baud_rate = 74880,
-        .data_bits = UART_DATA_8_BITS,
-        .parity    = UART_PARITY_DISABLE,
-        .stop_bits = UART_STOP_BITS_1,
-        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
-    };
-    uart_param_config(UART_NUM_0, &uart_config);
-    uart_driver_install(UART_NUM_0, BUF_SIZE * 2, 0, 0, NULL);
+    xTaskCreate(LED_task, "LED_task", 512, NULL, 5, NULL);
 
-    // Configure a temporary buffer for the incoming data
-//    uint8_t *data = (uint8_t *) malloc(BUF_SIZE);
+    initialise_wifi();
 
-//    xTaskCreate(LED_task, "LED_task", 512, NULL, 5, NULL);
-    xTaskCreate(UART_task, "UART_task", 2048, NULL, 5, NULL);
-    // SNTP service uses LwIP, please allocate large stack space.
+    ret = esp_info_load(NVS_KEY_WIFI_CONFIG, &wifi_config, sizeof(wifi_config_t));
+    if(ret < 0)
+    {
+		// make sure user touches device belong to themselves
+		awss_set_config_press(1);
+
+		// awss callback
+		iotx_event_regist_cb(linkkit_event_monitor);
+
+		// set valid (PK, PS, DN, NE) for (ssid,password) decode
+		set_iotx_info();
+
+		// awss entry
+		awss_start();
+    }
+    else
+    {
+        HAL_Awss_Connect_Ap(CONNECT_AP_TIMEOUT, (char*)(wifi_config.sta.ssid), (char*)(wifi_config.sta.password), 0, 0, NULL, 0);
+    }
+
     xTaskCreate(mqtt_example, "mqtt_example", 10240, NULL, 5, NULL);
 }
 

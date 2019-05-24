@@ -1,5 +1,5 @@
 app_main.o: \
- E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/main/app_main.c \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/main/app_main.c \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/stdlib.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/machine/ieeefp.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/_ansi.h \
@@ -27,7 +27,7 @@ app_main.o: \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/stdint.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/sys/_intsup.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/freertos/port/esp8266/include/freertos/FreeRTOSConfig.h \
- E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/build/include/sdkconfig.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/build/include/sdkconfig.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/rom/ets_sys.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/esp8266/eagle_soc.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/freertos/include/freertos/private/projdefs.h \
@@ -91,11 +91,37 @@ app_main.o: \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/nvs_flash/include/nvs_flash.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/nvs_flash/include/nvs.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/esp_smartconfig.h \
- E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/main/app_entry.h \
- E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/platform/include/platform_hal.h \
- E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/main/driver_control.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/main/app_entry.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/platform/include/platform_hal.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/main/driver_control.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/main/restore.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/pwm.h \
- E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/uart.h
+ E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/uart.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/src/services/awss/awss.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/iot_export.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_compat.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_errno.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_awss.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_mqtt.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_shadow.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_coap.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_ota.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/iot_import.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/iot_export.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_config.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_product.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_crypt.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_awss.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_dtls.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_tls.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_tcp.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_udp.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_ota.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_http.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_event.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_http2.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_http2_stream.h \
+ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_http2.h
 
 E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/stdlib.h:
 
@@ -151,7 +177,7 @@ E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/sy
 
 E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/freertos/port/esp8266/include/freertos/FreeRTOSConfig.h:
 
-E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/build/include/sdkconfig.h:
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/build/include/sdkconfig.h:
 
 E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/rom/ets_sys.h:
 
@@ -279,13 +305,65 @@ E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/nvs_flash/include/nvs.h:
 
 E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/esp_smartconfig.h:
 
-E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/main/app_entry.h:
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/main/app_entry.h:
 
-E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/platform/include/platform_hal.h:
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/platform/include/platform_hal.h:
 
-E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/main/driver_control.h:
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/main/driver_control.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/main/restore.h:
 
 E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/pwm.h:
 
 E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/uart.h:
-/e/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/main/./app_main.c:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/src/services/awss/awss.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/iot_export.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_compat.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_errno.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_awss.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_mqtt.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_shadow.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_coap.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_ota.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/iot_import.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/iot_export.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_config.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_product.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_crypt.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_awss.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_dtls.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_tls.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_tcp.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_udp.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/imports/iot_import_ota.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_http.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_event.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_http2.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_http2_stream.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/exports/iot_export_http2.h:
+/e/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/main/./app_main.c:
