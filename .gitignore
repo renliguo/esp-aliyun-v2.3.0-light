@@ -3,6 +3,8 @@
 .project
 .cproject
 
+ESP8266_RTOS_SDK/*
+
 # IDF compile output
 examples/*/build/*
 examples/*/*/build/*
