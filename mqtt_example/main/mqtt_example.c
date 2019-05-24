@@ -8,6 +8,9 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
 #include "iot_import.h"
 #include "iot_export.h"
 #include "app_entry.h"
@@ -17,14 +20,19 @@
 #include "driver_control.h"
 #include "driver/adc.h"
 #include "driver/pwm.h"
+#include "driver/uart.h"
+
+extern uint8_t data[BUF_SIZE];
+extern uint8_t UART_RX_flag;
+extern int len;
 
 extern uint32_t pwm0_duty;
 
 // #define PRODUCT_KEY             NULL
-#define PRODUCT_KEY             "a1ph88r0LZX"
-#define PRODUCT_SECRET          "w72lEw0pE7orPGv4"
-#define DEVICE_NAME             "hengsheng_2"
-#define DEVICE_SECRET           "6AXrzkVyY2kM9Fz6z9AW0RC8dY3rIMaO"
+#define PRODUCT_KEY             "a1GPRWGzLFK"
+#define PRODUCT_SECRET          "rxRs4O69GYz91Pga"
+#define DEVICE_NAME             "YOUERYUAN_1"
+#define DEVICE_SECRET           "pkEsfl6jc7F8dYZYcQWVcGlFr31PwBQH"
       
 /* These are pre-defined topics */
 #define TOPIC_UPDATE            "/"PRODUCT_KEY"/"DEVICE_NAME"/update"
@@ -137,7 +145,7 @@ static void _user_parse_cloud_cmd(const char *request, const int request_len)
         pwm_start();
 
 		pwm_get_duty(0,pwm_duty_get);
-		printf("--%d--",pwm_duty_get[0]);
+	//	printf("--%d--",pwm_duty_get[0]);
 	}
 
 }
@@ -148,20 +156,9 @@ static void _demo_message_arrive(void *pcontext, void *pclient, iotx_mqtt_event_
 
     switch (msg->event_type) {
         case IOTX_MQTT_EVENT_PUBLISH_RECEIVED:
-            /* print topic name and topic message */
-            EXAMPLE_TRACE("----");
-            EXAMPLE_TRACE("PacketId: %d", ptopic_info->packet_id);
-            EXAMPLE_TRACE("Topic: '%.*s' (Length: %d)",
-                          ptopic_info->topic_len,
-                          ptopic_info->ptopic,
-                          ptopic_info->topic_len);
-            EXAMPLE_TRACE("Payload: '%.*s' (Length: %d)",
-                          ptopic_info->payload_len,
-                          ptopic_info->payload,
-                          ptopic_info->payload_len);
-            EXAMPLE_TRACE("----");
 
-            _user_parse_cloud_cmd(ptopic_info->payload,ptopic_info->payload_len);
+        	uart_write_bytes(UART_NUM_0, (const char *) (ptopic_info->payload), ptopic_info->payload_len);
+//            _user_parse_cloud_cmd(ptopic_info->payload,ptopic_info->payload_len);
             break;
         default:
             EXAMPLE_TRACE("Should NOT arrive here.");
@@ -238,32 +235,27 @@ int mqtt_client(void)
     do {
     	LED_toggle();
         /* Generate topic message */
-        cnt++;
-        if(cnt>40)
-        {
-        	cnt=0;
 
-    		Valt=adc_read();
-    		Valtf=(float)Valt*5.1875/1024;
-    		printf("volt=%f \n",Valtf);
+//    	EXAMPLE_TRACE("UART_RX_flag: %d", UART_RX_flag);
+//    	EXAMPLE_TRACE("UART_RX_len : %d", len);
 
-        	AM2320_GetValue(tem,tem+1);
+    	if(UART_RX_flag==1)
+    	{
+    		UART_RX_flag=0;
 
-			msg_len = sprintf(msg_pub,"{\"id\":\"%d\",\"params\":{\"CurrentVoltage\":%.3f, \"CurrentHumidity\":%d,\"CurrentTemperature\":%d},\"method\":\"thing.event.property.post\"}", cnt,Valtf,tem[0],tem[1]);
-			if (msg_len < 0) {
-				EXAMPLE_TRACE("Error occur! Exit program");
-				return -1;
-			}
+			topic_msg.payload = (void *)data;
+			topic_msg.payload_len = len;
 
-			topic_msg.payload = (void *)msg_pub;
-			topic_msg.payload_len = msg_len;
+			//EXAMPLE_TRACE("in uart cmd!");
+			//uart_write_bytes(UART_NUM_0, (const char *) data, len);
 
 			rc = IOT_MQTT_Publish(pclient, TOPIC_UP_PROPERTY, &topic_msg);
 			if (rc < 0) {
 				EXAMPLE_TRACE("error occur when publish");
 			}
-			EXAMPLE_TRACE("packet-id=%u, publish topic msg=%s", (uint32_t)rc, msg_pub);
-        }
+			memset(data, 0, sizeof data);
+    	}
+
         /* handle the MQTT packet received from TCP or SSL connection */
         IOT_MQTT_Yield(pclient, 1000);
 
@@ -272,7 +264,7 @@ int mqtt_client(void)
             // HAL_SleepMs(2000);
             // cnt = 0;
         }
-        ESP_LOGI(TAG, "min:%u heap:%u", esp_get_minimum_free_heap_size(), esp_get_free_heap_size());
+        //ESP_LOGI(TAG, "min:%u heap:%u", esp_get_minimum_free_heap_size(), esp_get_free_heap_size());
     } while (1);
 
     IOT_MQTT_Yield(pclient, 200);
@@ -288,7 +280,7 @@ int mqtt_client(void)
 
 int linkkit_main(void *paras)
 {
-    IOT_SetLogLevel(IOT_LOG_DEBUG);
+    IOT_SetLogLevel(IOT_LOG_NONE);
 
     user_argc = 0;
     user_argv = NULL;

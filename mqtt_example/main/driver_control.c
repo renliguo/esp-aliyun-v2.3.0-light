@@ -11,8 +11,10 @@
 #include "driver_control.h"
 #include "esp_err.h"
 //#include "c_types.h"
+#include "esp_wifi.h"
 
 #include "iot_import.h"
+#include "nvs_flash.h"
 
 #define GPIO_OUTPUT_LED    2
 #define GPIO_OUTPUT_PIN_SEL  1ULL<<GPIO_OUTPUT_LED
@@ -36,6 +38,9 @@
 uint8_t IIC_TX_Buffer[]={0x03,0x00,0x04}; //读温湿度命令（无CRC校验）
 uint8_t IIC_RX_Buffer[10];
 int GPIO_flag=0;
+
+//extern wifi_config_t *wifi_config;
+
 
 void GPIO_init(void)
 {
@@ -170,7 +175,7 @@ void AM2320_GetValue(int* hum1,int* temp1)
             *hum1=hum;
             *temp1=temp;
 
-            printf("hum: %d  temp: %d \n\r",hum,temp);
+            //printf("hum: %d  temp: %d \n\r",hum,temp);
 
          }
          else

@@ -9,10 +9,14 @@
 #include <string.h>
 #include <stdarg.h>
 
+#define BUF_SIZE (1024)
+
 typedef struct {
     int argc;
     char **argv;
 }app_main_paras_t;
+
+
 
 int linkkit_main(void *paras);
 #endif

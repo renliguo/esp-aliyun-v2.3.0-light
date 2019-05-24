@@ -1,5 +1,5 @@
 app_main.o: \
- E:/git-repositories/ESP8266/esp-aliyun-v2.3.0/mqtt_example/main/app_main.c \
+ E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/main/app_main.c \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/stdlib.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/machine/ieeefp.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/_ansi.h \
@@ -27,7 +27,7 @@ app_main.o: \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/stdint.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/sys/_intsup.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/freertos/port/esp8266/include/freertos/FreeRTOSConfig.h \
- E:/git-repositories/ESP8266/esp-aliyun-v2.3.0/mqtt_example/build/include/sdkconfig.h \
+ E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/build/include/sdkconfig.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/rom/ets_sys.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/esp8266/eagle_soc.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/freertos/include/freertos/private/projdefs.h \
@@ -90,10 +90,12 @@ app_main.o: \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/log/include/esp_log_internal.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/nvs_flash/include/nvs_flash.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/nvs_flash/include/nvs.h \
- E:/git-repositories/ESP8266/esp-aliyun-v2.3.0/mqtt_example/main/app_entry.h \
- E:/git-repositories/ESP8266/esp-aliyun-v2.3.0/platform/include/platform_hal.h \
- E:/git-repositories/ESP8266/esp-aliyun-v2.3.0/mqtt_example/main/driver_control.h \
- E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/pwm.h
+ E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/esp_smartconfig.h \
+ E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/main/app_entry.h \
+ E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/platform/include/platform_hal.h \
+ E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/main/driver_control.h \
+ E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/pwm.h \
+ E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/uart.h
 
 E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/stdlib.h:
 
@@ -149,7 +151,7 @@ E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/newlib/newlib/include/sy
 
 E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/freertos/port/esp8266/include/freertos/FreeRTOSConfig.h:
 
-E:/git-repositories/ESP8266/esp-aliyun-v2.3.0/mqtt_example/build/include/sdkconfig.h:
+E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/build/include/sdkconfig.h:
 
 E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/rom/ets_sys.h:
 
@@ -275,11 +277,15 @@ E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/nvs_flash/include/nvs_fl
 
 E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/nvs_flash/include/nvs.h:
 
-E:/git-repositories/ESP8266/esp-aliyun-v2.3.0/mqtt_example/main/app_entry.h:
+E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/esp_smartconfig.h:
 
-E:/git-repositories/ESP8266/esp-aliyun-v2.3.0/platform/include/platform_hal.h:
+E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/main/app_entry.h:
 
-E:/git-repositories/ESP8266/esp-aliyun-v2.3.0/mqtt_example/main/driver_control.h:
+E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/platform/include/platform_hal.h:
+
+E:/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/main/driver_control.h:
 
 E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/pwm.h:
-/e/git-repositories/ESP8266/esp-aliyun-v2.3.0/mqtt_example/main/./app_main.c:
+
+E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/uart.h:
+/e/git-repositories/ESP8266/esp-aliyun-uart-v2.3.0/mqtt_example/main/./app_main.c:
