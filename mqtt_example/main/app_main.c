@@ -46,7 +46,6 @@
 #include "driver_control.h"
 #include "restore.h"
 
-#include "driver/pwm.h"
 #include "driver/uart.h"
 
 #include "awss.h"
@@ -56,18 +55,6 @@ int WIFIconfig_cnt=0;
 uint8_t data[BUF_SIZE];
 uint8_t UART_RX_flag=0;
 int len;
-
-uint32_t pwm0_duty=1000;
-
-const uint32_t pin_num[3] = {
-    12,
-    13,
-    15
-};
-
-int16_t phase[4] = {
-    0, 0, 50,
-};
 
 #define WIFI_CONF_SPACE_NAME     "WIFI_CONF_APP"
 #define NVS_KEY_WIFI_CONFIG "wifi_config"
@@ -261,7 +248,6 @@ void LED_task(void *pvParameter)
 
 void app_main()
 {
-	uint32_t pwm_duty_init[3]={1000,0,0};
     //Initialize NVS
     esp_err_t ret = nvs_flash_init();
 
@@ -279,6 +265,8 @@ void app_main()
     restore_factory_init();
 
     GPIO_init();
+
+
 
     xTaskCreate(LED_task, "LED_task", 512, NULL, 5, NULL);
 

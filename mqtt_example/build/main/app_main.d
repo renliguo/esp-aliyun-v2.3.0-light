@@ -95,7 +95,6 @@ app_main.o: \
  E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/platform/include/platform_hal.h \
  E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/main/driver_control.h \
  E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/main/restore.h \
- E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/pwm.h \
  E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/uart.h \
  E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/src/services/awss/awss.h \
  E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/iotkit-embedded/output/release/include/iot_export.h \
@@ -312,8 +311,6 @@ E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/platform/include/platform_ha
 E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/main/driver_control.h:
 
 E:/git-repositories/ESP8266/esp-aliyun-v2.3.0-light/mqtt_example/main/restore.h:
-
-E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/pwm.h:
 
 E:/git-repositories/ESP8266/ESP8266_RTOS_SDK/components/esp8266/include/driver/uart.h:
 

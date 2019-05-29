@@ -8,6 +8,7 @@
 
 #include "driver/gpio.h"
 #include "driver/i2c.h"
+#include "driver/pwm.h"
 #include "driver_control.h"
 #include "esp_err.h"
 //#include "c_types.h"
@@ -41,6 +42,15 @@ int GPIO_flag=0;
 
 //extern wifi_config_t *wifi_config;
 
+const uint32_t pin_num[3] = {
+    12,
+    13,
+    15
+};
+
+int16_t phase[4] = {
+    0, 0, 0,
+};
 
 void GPIO_init(void)
 {
@@ -150,7 +160,6 @@ void Clear_Data (void)
 	}
 }
 
-
 void AM2320_GetValue(int* hum1,int* temp1)
 {
 	uint8_t i;
@@ -188,5 +197,16 @@ void AM2320_GetValue(int* hum1,int* temp1)
 //            printf("%d Byte: %x \n\r", i+1,IIC_RX_Buffer[i]);
 //        }
 }
+
+
+void light_init(void)
+{
+	uint32_t pwm_duty_init[3]={0,0,0};
+
+    pwm_init(1000, pwm_duty_init, 3, pin_num);
+    pwm_set_phases(phase);
+    pwm_start();
+}
+
 
 
